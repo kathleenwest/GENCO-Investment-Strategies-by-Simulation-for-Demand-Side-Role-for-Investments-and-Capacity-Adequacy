@@ -1,0 +1,95 @@
+function [bus,gen,gencost,N] = invest(bus,gen,gencost,player,capacity,bidprice,N,loadforecast);
+
+businvest = 2; % default bus to invest at 
+clc;
+choice = 1;
+while ~isequal(choice,-1)
+fprintf('\n');
+fprintf('\n');
+fprintf('\n_____________________________________________________________________');
+fprintf('\n');
+fprintf('\n               Invest in Generation                                  ');
+fprintf('\n');
+fprintf('\n   Player:  %s',player);
+fprintf('\n');
+fprintf('\n');
+fprintf('\n 1.  Choose Bus Number  (Default is Bus 2)             ');
+fprintf('\n 2.  View Your Plant Information           ');
+fprintf('\n 3.  Continue.....          ');
+fprintf('\n 4.  Quit Simulation');   
+fprintf('\n');   
+
+choice = input('Enter Choice Number:');
+fprintf('\n');
+
+
+fprintf('\n');
+    if choice == 1
+
+    clc
+    choice2 = 1
+    while ~isequal(choice2,-1)
+        clc
+        fprintf('\n');
+        fprintf('\n');
+        fprintf('\n Choose Bus Number  (Default is Bus 2)             ');
+        fprintf('\n');   
+        fprintf('\n');
+        choice2 = input('Enter Choice Number:');
+        fprintf('\n');
+        if choice2 <= 9 && choice2 >=2  
+            businvest = choice2;
+            fprintf('\n');
+            fprintf('\n');
+            fprintf('\n   You will be investing at bus number:  %s',int2str(businvest));
+            fprintf('\n');
+            pause(2);
+            clc
+            choice2 = -1;
+        else
+            if choice2 == 1
+                
+            else
+            end;
+            
+        end;
+    end;    
+    else
+    end;
+    
+
+    if choice == 2
+        clc
+       [mc] = coalsteam(N,capacity);
+    else
+    end;
+    if choice == 3
+      clc
+      % Add New Investment Generator
+      gen_add = [businvest          capacity           50          50          -50        1.025          100            1          capacity           10];
+      gen = [gen; gen_add];
+      % Add New Investment Generator Cost Information
+      gencost_add   =         [2            0            0            3            0        bidprice            0];
+      gencost = [gencost; gencost_add];
+      % Change bus type except the slack
+      if businvest == 1
+      % do nothing
+      else
+       bus(businvest,2) = 2; 
+      end;
+      % Update load with next year's load forecast
+      bus(1:9,3) = loadforecast(1:9,1);
+      % Change N
+      N = N-1;
+      choice = -1;
+    else 
+    end;
+    if choice == 4
+      choice = -1;
+      clc
+    else 
+    end;
+
+end;
+
+return;

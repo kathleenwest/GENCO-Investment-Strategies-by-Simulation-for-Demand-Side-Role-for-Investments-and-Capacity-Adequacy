@@ -1,0 +1,72 @@
+function [MVAoverloads] = bctgcalculateMVAoverloads9bus(branchnew,Sf,St,f,t)
+%BCTGCALCULATEMVAOVERLOADS - Calculates MVA violations for branch
+% outages
+%
+% Inputs: 1P1Q estimated voltage V, bus data, from bus, to bus
+% Outputs: Condensed matrix with ONLY violated MVA
+% violations
+%
+% bctgCombinedMVAoverloads: (NX5) where N is the number of violations
+% [<---branch contingency --->  <---branch overloaded-->  <---violation--->
+% [from_bus             to_bus  from_bus         to_bus   percent_overload]
+
+
+%-------------------------------------------------------------------------
+% Compute MVA Overloads
+%-------------------------------------------------------------------------
+D = size(branchnew);
+MVAoverloads = zeros(D(1),4);
+
+for i=1:D(1)
+    if abs(Sf(i,1)) > branchnew(i,6)
+        MVAoverloads(i,1) = branchnew(i,1);
+        MVAoverloads(i,2) = branchnew(i,2);
+        MVAoverloads(i,3) = 100*abs(Sf(i,1))./branchnew(i,6);
+    else
+    end;
+    if abs(St(i,1)) > branchnew(i,6)
+        MVAoverloads(i,1) = branchnew(i,1);
+        MVAoverloads(i,2) = branchnew(i,2);      
+        MVAoverloads(i,4) = 100*abs(St(i,1))./branchnew(i,6);
+    else
+    end
+end;
+
+%Eliminate zero rows
+n=D(1);
+while n >0
+    if MVAoverloads(n,1) == 0
+        MVAoverloads(n,:) = [];
+    else
+    end
+    n = n-1;
+end;
+
+% Determines the Max overload between the from and to end of the branch
+
+D = size(MVAoverloads);
+MVAoverloads2 = zeros(D(1),3);
+for i =1:D(1)
+    MVAoverloads2(i,1) = MVAoverloads(i,1);
+    MVAoverloads2(i,2) = MVAoverloads(i,2);
+    if MVAoverloads(i,3) > MVAoverloads(i,4)
+        MVAoverloads2(i,3) = MVAoverloads(i,3);    
+    else
+        MVAoverloads2(i,3) = MVAoverloads(i,4);
+    end
+end;
+
+MVAoverloads = MVAoverloads2;
+D = size(MVAoverloads);
+MVAoverloads2 = zeros(D(1),5);
+for i=1:D(1)
+    MVAoverloads2(i,1) = f;
+    MVAoverloads2(i,2) = t;
+    MVAoverloads2(i,3) = MVAoverloads(i,1);
+    MVAoverloads2(i,4) = MVAoverloads(i,2);
+    MVAoverloads2(i,5) = MVAoverloads(i,3);
+end;
+MVAoverloads = MVAoverloads2;
+clear D;
+return;
+
